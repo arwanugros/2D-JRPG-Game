@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc1d02899efe5fa4a9548b4e2559725b, type: 3}
   m_Name: Player
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
-  unitName: 
+  unitName: Player
   unitSprite: {fileID: 0}
-  maxHP: 0
-  baseAttack: 0
+  maxHP: 100
+  baseAttack: 5
   type: 0
