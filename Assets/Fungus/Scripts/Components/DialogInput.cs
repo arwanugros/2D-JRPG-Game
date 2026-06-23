@@ -2,6 +2,7 @@
 // It is released for free under the MIT open source license (https://github.com/snozbot/fungus/blob/master/LICENSE)
 
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
 namespace Fungus
@@ -84,32 +85,37 @@ namespace Fungus
                 currentStandaloneInputModule = EventSystem.current.GetComponent<StandaloneInputModule>();
             }
 
-            if (writer != null)
-            {
-                if (Input.GetButtonDown(currentStandaloneInputModule.submitButton) ||
-                    (cancelEnabled && Input.GetButton(currentStandaloneInputModule.cancelButton)))
-                {
-                    SetNextLineFlag();
-                }
-            }
+            if (writer == null) return;
 
             switch (clickMode)
             {
-            case ClickMode.Disabled:
-                break;
-            case ClickMode.ClickAnywhere:
-                if (Input.GetMouseButtonDown(0))
-                {
-                    SetClickAnywhereClickedFlag();
-                }
-                break;
-            case ClickMode.ClickOnDialog:
-                if (dialogClickedFlag)
-                {
-                    SetNextLineFlag();
-                    dialogClickedFlag = false;
-                }
-                break;
+                case ClickMode.ClickAnywhere:
+                    // Menggunakan New Input System untuk deteksi klik kiri mouse
+                    if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+                    {
+                        SetNextLineFlag();
+                    }
+                    break;
+
+                case ClickMode.ClickOnDialog:
+                    // Menggunakan New Input System untuk klik kiri mouse
+                    if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+                    {
+                        // Mengecek apakah mouse berada di atas UI dialog
+                        if (UnityEngine.EventSystems.EventSystem.current != null && 
+                            UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                        {
+                            SetNextLineFlag();
+                        }
+                    }
+                    break;
+            }
+
+            // Mengabaikan input Cancel/Continue bawaan lama agar tidak bentrok
+            if (dialogClickedFlag)
+            {
+                dialogClickedFlag = false;
+                writer.OnNextLineEvent();
             }
 
             if (ignoreClickTimer > 0f)
