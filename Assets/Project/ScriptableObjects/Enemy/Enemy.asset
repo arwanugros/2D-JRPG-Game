@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc1d02899efe5fa4a9548b4e2559725b, type: 3}
-  m_Name: Player
-  m_EditorClassIdentifier: Assembly-CSharp::UnitData
-  unitName: Player
-  unitSprite: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 489b22db07538a24b8441f0920225b58, type: 3}
+  m_Name: Enemy
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyUnitData
+  unitName: Enemy
   maxHP: 100
   baseAttack: 5
-  type: 0
+  critChance: 5
