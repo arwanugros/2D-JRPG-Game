@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float interactRadius = 1.5f;
     public bool canMove = true;
     public LayerMask interactableLayer;
-    
+
     [Header("Interaction UI")]
     public GameObject interactUI;
     public TextMeshProUGUI interactText;
@@ -25,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 movement;
     private Collider2D currentInteractable;
     private Vector3 lastPosition;
+    private float lastFacingX = 1f;
+    private float interactCooldown = 0f;
 
     private void Awake()
     {
@@ -38,48 +40,77 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        interactAction.action.performed += OnInteractPerformed;
-    }
-
-    private void OnDisable()
-    {
-        interactAction.action.performed -= OnInteractPerformed;
+        if (moveAction != null && moveAction.action != null) moveAction.action.Enable();
+        if (interactAction != null && interactAction.action != null) interactAction.action.Enable();
     }
 
     private void Update()
     {
+        if (interactCooldown > 0f)
+        {
+            interactCooldown -= Time.deltaTime;
+        }
+
         if (canMove)
         {
             movement = moveAction.action.ReadValue<Vector2>();
             CheckInteractable();
+
+            bool isInteractPressed = false;
+            
+            if (interactAction != null && interactAction.action != null && interactAction.action.WasPressedThisFrame())
+            {
+                isInteractPressed = true;
+            }
+            
+            if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
+                isInteractPressed = true;
+            }
+
+            if (isInteractPressed && interactCooldown <= 0f)
+            {
+                Interact();
+            }
         }
         else
         {
             movement = Vector2.zero;
+            if (interactUI != null && interactUI.activeSelf)
+            {
+                interactUI.SetActive(false);
+            }
         }
     }
 
     private void LateUpdate()
     {
-        bool isMoving = false;
         Vector3 currentPos = transform.position;
         Vector3 delta = currentPos - lastPosition;
 
-        if (canMove && movement.sqrMagnitude > 0.01f)
+        bool isMoving;
+        float dirX;
+
+        if (movement.sqrMagnitude > 0.01f)
         {
             isMoving = true;
-            
-            if (movement.x > 0.01f && spriteRenderer != null) spriteRenderer.flipX = false;
-            else if (movement.x < -0.01f && spriteRenderer != null) spriteRenderer.flipX = true;
+            dirX = movement.x;
         }
-        else if (!canMove)
+        else
         {
-            if (delta.sqrMagnitude > 0.000001f)
+            isMoving = delta.sqrMagnitude > 0.000001f;
+            dirX = delta.x;
+        }
+
+        if (isMoving)
+        {
+            if (Mathf.Abs(dirX) > 0.001f)
             {
-                isMoving = true;
-                
-                if (delta.x > 0.001f && spriteRenderer != null) spriteRenderer.flipX = false;
-                else if (delta.x < -0.001f && spriteRenderer != null) spriteRenderer.flipX = true;
+                lastFacingX = dirX;
+            }
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.flipX = lastFacingX < 0f;
             }
         }
 
@@ -99,22 +130,16 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnInteractPerformed(InputAction.CallbackContext context)
-    {
-        if (!canMove) return;
-        Interact();
-    }
-
     private void CheckInteractable()
     {
         currentInteractable = Physics2D.OverlapCircle(rb.position, interactRadius, interactableLayer);
-        
+
         if (currentInteractable != null)
         {
             if (interactUI != null)
             {
                 interactUI.SetActive(true);
-                
+
                 SpriteRenderer npcSprite = currentInteractable.GetComponentInChildren<SpriteRenderer>();
                 if (npcSprite != null)
                 {
@@ -147,5 +172,19 @@ public class PlayerMovement : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, interactRadius);
+    }
+
+    public void SetMovementState(bool state)
+    {
+        canMove = state;
+        if (!canMove)
+        {
+            movement = Vector2.zero;
+            if (animator != null) animator.SetBool("IsRunning", false);
+        }
+        else
+        {
+            interactCooldown = 0.5f;
+        }
     }
 }

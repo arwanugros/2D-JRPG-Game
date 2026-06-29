@@ -14,13 +14,11 @@ public class DamageText : MonoBehaviour
         if (isCrit)
         {
             textMesh.text = "CRIT\n" + damage.ToString();
-            textMesh.color = Color.yellow;
-            textMesh.fontSize = 40f;
+            textMesh.fontSize = 48f;
         }
         else
         {
             textMesh.text = damage.ToString();
-            textMesh.color = Color.white;
             textMesh.fontSize = 36f;
         }
 
