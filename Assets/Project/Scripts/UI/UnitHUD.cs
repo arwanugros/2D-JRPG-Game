@@ -1,46 +1,56 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UnitHUD : MonoBehaviour
 {
+    public Slider hpSlider;
+    public Slider npSlider;
     public Image portraitImage;
-    public Slider hpBar;
-    public Slider npBar;
+    public TextMeshProUGUI hpText;
+    public TextMeshProUGUI npText;
+    public TextMeshProUGUI nameText;
 
-    public void InitHUD(int maxHP, bool isPlayer, Sprite portrait = null)
+    private int maxHP;
+
+    public void InitHUD(int maxHp, bool showNP, string unitName, Sprite portrait = null)
     {
-        hpBar.maxValue = maxHP;
-        hpBar.value = maxHP;
+        this.maxHP = maxHp;
+        
+        hpSlider.maxValue = maxHp;
+        hpSlider.value = maxHp;
+        if (hpText != null) hpText.text = maxHp.ToString();
 
-        if (isPlayer)
+        if (nameText != null) nameText.text = unitName;
+
+        if (npSlider != null)
         {
-            if (portraitImage != null && portrait != null)
-            {
-                portraitImage.sprite = portrait;
-                portraitImage.gameObject.SetActive(true);
-            }
-            
-            if (npBar != null)
-            {
-                npBar.gameObject.SetActive(true);
-                npBar.maxValue = 100f;
-                npBar.value = 0f;
-            }
+            npSlider.maxValue = 100f;
+            npSlider.value = 0f;
+            npSlider.gameObject.SetActive(showNP);
         }
-        else
+        
+        if (npText != null)
         {
-            if (portraitImage != null) portraitImage.gameObject.SetActive(false);
-            if (npBar != null) npBar.gameObject.SetActive(false);
+            npText.text = "0%";
+            npText.gameObject.SetActive(showNP);
+        }
+
+        if (portraitImage != null && portrait != null)
+        {
+            portraitImage.sprite = portrait;
         }
     }
 
     public void UpdateHP(int currentHP)
     {
-        hpBar.value = currentHP;
+        hpSlider.value = currentHP;
+        if (hpText != null) hpText.text = currentHP.ToString();
     }
 
     public void UpdateNP(float currentNP)
     {
-        if (npBar != null) npBar.value = currentNP;
+        if (npSlider != null) npSlider.value = currentNP;
+        if (npText != null) npText.text = Mathf.RoundToInt(currentNP) + "%";
     }
 }

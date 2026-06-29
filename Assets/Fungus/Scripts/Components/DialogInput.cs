@@ -39,6 +39,9 @@ namespace Fungus
         [Tooltip("Ignore input if a Menu dialog is currently active")]
         [SerializeField] protected bool ignoreMenuClicks = true;
 
+        [Tooltip("Input action to advance dialogue")]
+        [SerializeField] protected InputActionReference nextDialogueAction;
+
         protected bool dialogClickedFlag;
 
         protected bool nextLineInputFlag;
@@ -54,6 +57,22 @@ namespace Fungus
             writer = GetComponent<Writer>();
 
             CheckEventSystem();
+        }
+
+        protected virtual void OnEnable()
+        {
+            if (nextDialogueAction != null && nextDialogueAction.action != null)
+            {
+                nextDialogueAction.action.Enable();
+            }
+        }
+
+        protected virtual void OnDisable()
+        {
+            if (nextDialogueAction != null && nextDialogueAction.action != null)
+            {
+                nextDialogueAction.action.Disable();
+            }
         }
 
         // There must be an Event System in the scene for Say and Menu input to work.
@@ -109,6 +128,22 @@ namespace Fungus
                         }
                     }
                     break;
+            }
+
+            // Advancing dialogue using Space key or dedicated nextDialogueAction
+            bool advanceDialoguePressed = false;
+            if (nextDialogueAction != null && nextDialogueAction.action != null)
+            {
+                advanceDialoguePressed = nextDialogueAction.action.WasPressedThisFrame();
+            }
+            else if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
+                advanceDialoguePressed = true;
+            }
+
+            if (advanceDialoguePressed)
+            {
+                SetNextLineFlag();
             }
 
             // Mengabaikan input Cancel/Continue bawaan lama agar tidak bentrok

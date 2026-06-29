@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fb50e613fb201a4592337493461bfb9, type: 3}
   m_Name: Player
   m_EditorClassIdentifier: Assembly-CSharp::PlayerUnitData
-  unitName: Player
+  unitName: Elyra
   maxHP: 100
-  baseAttack: 60
-  unitPortrait: {fileID: 0}
+  baseAttack: 6
+  unitPortrait: {fileID: -3318188226485093758, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   deck: 0000000001000000010000000100000002000000
   npGain: 12
   starGain: 5

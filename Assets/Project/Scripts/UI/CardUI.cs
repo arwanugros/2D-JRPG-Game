@@ -21,6 +21,7 @@ public class CardUI : MonoBehaviour
         if (type == CardType.BUSTER) cardImage.color = Color.red;
         else if (type == CardType.ARTS) cardImage.color = Color.blue;
         else if (type == CardType.QUICK) cardImage.color = Color.green;
+        else if (type == CardType.ULTIMATE) cardImage.color = Color.yellow;
 
         cardButton.onClick.RemoveAllListeners();
         cardButton.onClick.AddListener(OnClick);
@@ -29,6 +30,7 @@ public class CardUI : MonoBehaviour
 
     private void OnClick()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.Instance.uiClick);
         manager.OnCardClicked(cardIndex);
         cardButton.interactable = false;
     }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum CardType { BUSTER, ARTS, QUICK }
+public enum CardType { BUSTER, ARTS, QUICK, ULTIMATE }
 
 public class BaseUnitData : ScriptableObject
 {

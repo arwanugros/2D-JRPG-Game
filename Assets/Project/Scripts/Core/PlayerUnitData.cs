@@ -9,5 +9,4 @@ public class PlayerUnitData : BaseUnitData
     [Header("FGO Player Stats")]
     public CardType[] deck = new CardType[5];
     public float npGain;
-    public float starGain;
 }

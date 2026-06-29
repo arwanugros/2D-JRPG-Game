@@ -15,4 +15,5 @@ MonoBehaviour:
   unitName: Enemy
   maxHP: 100
   baseAttack: 5
-  critChance: 5
+  unitPortrait: {fileID: -3318188226485093758, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  critChance: 15
